@@ -1,4 +1,4 @@
-name: Build OpenWrt on RAX3000me
+name: Build rax-3000me Firmware
 
 on:
   workflow_dispatch:
