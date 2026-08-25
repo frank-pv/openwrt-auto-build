@@ -41,7 +41,7 @@ jobs:
           sudo apt-get clean
           sudo docker system prune -af || true
           echo "===== After ====="
-          df -h
+          df -h;free -h;echo $(nproc) cores
 
       - name: Install Dependencies
         run: |
@@ -97,7 +97,7 @@ jobs:
         working-directory: openwrt
         run: |
           mkdir release
-          find bin/targets -type f -exec cp {} release/ \;
+          find bin/targets -type f ! -path '*/packages/*' -exec cp {} release/ \;
 
       - name: Generate Tag
         id: tag
