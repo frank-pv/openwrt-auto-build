@@ -11,16 +11,14 @@ permissions:
   actions: write
 
 env:
-  REPO_URL: https://github.com/openwrt/openwrt.git
-  REPO_BRANCH: openwrt-24.10
-  FEEDS_CONF: feeds.conf.default
-  DIY_MODEL: zbt-z8103ax
-  CONFIG_FILE: model/zbt-z8103ax/.config
-  DIY_P1_SH: model/zbt-z8103ax/diy-part1.sh
-  DIY_P2_SH: model/zbt-z8103ax/diy-part2.sh
-  MY_CONFIG: model/zbt-z8103ax/my-config
-  MY_DTS: model/zbt-z8103ax/z8103ax.dts
-  MY_MK: model/zbt-z8103ax/filogic.mk
+  REPO_URL: https://github.com/immortalwrt/immortalwrt.git
+  REPO_BRANCH: openwrt-25.12
+  MY_CONF: model/rax-3000me/my-config
+  DIY_MODEL: rax-3000me
+  CONFIG_FILE: model/rax-3000me/.config
+  DIY_P1_SH: model/rax-3000me/diy-part1.sh
+  DIY_P2_SH: model/rax-3000me/diy-part2.sh
+  MY_CONFIG: model/rax-3000me/my-config
   SECRET_PASSWORD: ${{ secrets.PASSWORD }}
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
@@ -42,8 +40,7 @@ jobs:
         sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
         sudo docker image prune --all --force
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install jq ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib g++-multilib git gnutls-dev gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses-dev libpython3-dev libreadline-dev libssl-dev libtool libyaml-dev libz-dev lld llvm lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
-        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq install bzip2 g++ gawk gcc git glibc-source libncurses-dev make swig jq vim unzip 
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /mnt/workdir
@@ -56,11 +53,12 @@ jobs:
         df -hT 
         lsblk
         git clone -b $REPO_BRANCH --depth=1 --single-branch  $REPO_URL
+        mv immortalwrt openwrt
         ln -sf /mnt/workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
       run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
+        [ -e $MY_CONF ] && mv $MY_CONF openwrt/package/dev/my-config/Makefile
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
@@ -76,8 +74,7 @@ jobs:
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        cp -f $GITHUB_WORKSPACE/$MY_DTS ./target/linux/mediatek/dts/mt7981b-zbtlink-zbt-z8103ax.dts
-        cp -f $GITHUB_WORKSPACE/$MY_MK ./target/linux/mediatek/image/filogic.mk
+
     - name: copy custom .config configuration
       run: |
         [ -e $CONFIG_FILE ] && cp $CONFIG_FILE openwrt/.config
