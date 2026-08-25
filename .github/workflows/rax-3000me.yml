@@ -78,7 +78,11 @@ jobs:
         working-directory: openwrt
         run: |
           cp ../model/${{ github.event.inputs.model }}/.config .config
+          # 做对比
+          cp .config .config.orig
           make defconfig
+          echo "========== .config Diff =========="
+          diff -u .config.orig .config || true
 
       - name: Download Sources
         working-directory: openwrt
