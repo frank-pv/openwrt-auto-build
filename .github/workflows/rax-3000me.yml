@@ -58,6 +58,7 @@ jobs:
 
     - name: Load custom feeds
       run: |
+        mkdir -p openwrt/package/dev/my-config
         [ -e $MY_CONF ] && mv $MY_CONF openwrt/package/dev/my-config/Makefile
         chmod +x $DIY_P1_SH
         cd openwrt
