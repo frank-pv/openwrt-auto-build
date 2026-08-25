@@ -41,7 +41,7 @@ jobs:
           sudo apt-get clean
           sudo docker system prune -af || true
           echo "===== After ====="
-          df -h;free -h;echo $(nproc) cores
+          df -h;free -h;echo "$(nproc) cores"
 
       - name: Install Dependencies
         run: |
