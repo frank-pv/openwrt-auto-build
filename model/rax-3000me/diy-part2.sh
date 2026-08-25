@@ -26,6 +26,7 @@ cd ../&&rm -rf gggg
 mkdir -p 'dddd'&&cd dddd
 git clone --single-branch --depth=1 https://github.com/immortalwrt/luci.git
 git clone --single-branch --depth=1 https://github.com/immortalwrt/packages.git
+rm -rf ../feeds/luci/applications/luci-app-ddns-go/ ../feeds/packages/net/ddns-go/ 
 mv luci/applications/luci-app-ddns-go/ ../feeds/luci/applications/
 mv packages/net/ddns-go/ ../feeds/packages/net/
 cd ../&&rm -rf dddd
