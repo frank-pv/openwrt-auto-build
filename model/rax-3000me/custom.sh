@@ -23,10 +23,12 @@ git clone  --depth=1 --single-branch https://github.com/pymumu/openwrt-smartdns.
 sed -i -E 's/^([[:space:]]*)(PKG_MIRROR_HASH|MIRROR_HASH):=.*/\1\2:=skip/' ./feeds/packages/net/smartdns/Makefile
 
 #frp
-#67246606f504cb15df72193f1a83911259e92b6a87838cff8850031efd406dc8
 mkdir -p 'gggg'&&cd gggg 
 git clone --depth=1 --single-branch https://github.com/openwrt/packages
+git clone --depth=1 --single-branch https://github.com/openwrt/luci.git
 rm -rf ../feeds/packages/net/frp/* &&mv packages/net/frp/* ../feeds/packages/net/frp/
+rm -rf ../feeds/luci/applications/luci-app-frpc/*&&mv luci/applications/luci-app-frpc/* ../feeds/luci/applications/luci-app-frpc/
+rm -rf ../feeds/luci/applications/luci-app-frps/*&&mv luci/applications/luci-app-frps/* ../feeds/luci/applications/luci-app-frps/
 cd ../&&rm -rf gggg
 
 #ddnsgo
