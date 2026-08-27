@@ -33,7 +33,6 @@
 
 `custom.sh` 会在编译前执行以下定制：
 
-- 加入 PassWall 2、PassWall 依赖包和 Argon 主题。
 - 替换 SmartDNS、FRP 和 DDNS-Go 相关源码。
 - 调整 DDNS-Go 服务使用的运行用户。
 
