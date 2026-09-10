@@ -38,6 +38,8 @@ git clone --single-branch --depth=1 https://github.com/immortalwrt/packages.git
 rm -rf ../feeds/luci/applications/luci-app-ddns-go/ ../feeds/packages/net/ddns-go/ 
 mv luci/applications/luci-app-ddns-go/ ../feeds/luci/applications/
 mv packages/net/ddns-go/ ../feeds/packages/net/
+# golang
+rm -rf ../feeds/packages/lang/golang/ &&mv packages/lang/golang/ ../feeds/packages/lang/
 cd ../&&rm -rf dddd
 
 sed -i '/USERID:=ddns-go:ddns-go$/d' feeds/packages/net/ddns-go/Makefile
