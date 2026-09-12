@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set Timezone
         run: sudo timedatectl set-timezone $TZ
@@ -106,15 +106,16 @@ jobs:
           echo "tag=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_OUTPUT
 
       - name: Delete Old Releases
-        uses: dev-drprasad/delete-older-releases@v0.3.4
-        with:
-          keep_latest: 2
-          delete_tags: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release list --limit 1000 --json tagName --jq '.[2:] | .[].tagName' |
+          while IFS= read -r tag; do
+            [ -z "$tag" ] || gh release delete "$tag" --yes --cleanup-tag
+          done
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: OpenWrt-${{ github.event.inputs.model }}-${{ steps.tag.outputs.tag }}
