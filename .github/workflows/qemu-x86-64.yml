@@ -1,0 +1,125 @@
+name: Build OpenWrt for qemu-x86-64
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Build Model"
+        required: true
+        default: "qemu-x86-64"
+        # 对应model下的型号
+
+permissions:
+  contents: write
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 480
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set Timezone
+        run: sudo timedatectl set-timezone $TZ
+
+      - name: Free Disk Space
+        run: |
+          echo "===== Before ====="
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/.ghcup
+          sudo apt-get clean
+          sudo docker system prune -af || true
+          echo "===== After ====="
+          df -h;free -h;echo "$(nproc) cores"
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+
+          sudo apt-get install -y \
+          bzip2 g++ gawk gcc git glibc-source libncurses-dev \
+          make swig jq vim unzip
+
+      - name: Clone OpenWrt
+        run: |
+          git clone --depth=1 --single-branch -b openwrt-25.12  https://github.com/immortalwrt/immortalwrt.git openwrt
+          
+      - name: Run Custom Script
+        working-directory: openwrt
+        run: |
+           if [ -f "../model/${{ github.event.inputs.model }}/custom.sh" ]; then
+           chmod +x "../model/${{ github.event.inputs.model }}/custom.sh"
+           "../model/${{ github.event.inputs.model }}/custom.sh"
+           else
+           echo "No custom.sh found, skip."
+           fi
+      - name: Copy Makefile
+        working-directory: openwrt
+        run: cp "../model/${{ github.event.inputs.model }}/Makefile" package/dev/my-config/Makefile
+
+      - name: Update Feeds
+        working-directory: openwrt
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Load Config
+        working-directory: openwrt
+        run: |
+          cp ../model/${{ github.event.inputs.model }}/.config .config
+          # 做对比
+          cp .config .config.orig
+          make defconfig
+          echo "========== .config Diff =========="
+          diff -u .config.orig .config || true
+
+      - name: Download Sources
+        working-directory: openwrt
+        run: make download -j$(nproc)
+
+      - name: Build Firmware
+        working-directory: openwrt
+        run: |
+          make -j$(nproc)
+
+      - name: Prepare Release
+        working-directory: openwrt
+        run: |
+          mkdir release
+          find bin/targets -type f ! -path '*/packages/*' -exec cp {} release/ \;
+
+      - name: Generate Tag
+        id: tag
+        run: |
+          echo "tag=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_OUTPUT
+
+      - name: Delete Old Releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release list --limit 1000 --json tagName --jq '.[2:] | .[].tagName' |
+          while IFS= read -r tag; do
+            [ -z "$tag" ] || gh release delete "$tag" --yes --cleanup-tag
+          done
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: OpenWrt-${{ github.event.inputs.model }}-${{ steps.tag.outputs.tag }}
+          generate_release_notes: true
+          files: openwrt/release/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
