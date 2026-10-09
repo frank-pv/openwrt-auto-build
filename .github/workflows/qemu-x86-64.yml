@@ -41,8 +41,13 @@ jobs:
           sudo rm -rf /usr/local/.ghcup
           sudo apt-get clean
           sudo docker system prune -af || true
-          echo "===== After ====="
-          df -h;free -h;echo "$(nproc) cores"
+
+      - name: Check build environment
+        run: |
+          echo "===== Disk =====";df -h
+          echo "===== Memory =====";free -h
+          echo "===== CPU Cores =====";echo "$(nproc) cores"
+          echo "===== CPU Information =====";lscpu
 
       - name: Install Dependencies
         run: |
