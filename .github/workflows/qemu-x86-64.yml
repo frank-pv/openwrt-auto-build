@@ -54,8 +54,7 @@ jobs:
 
       - name: Clone OpenWrt
         run: |
-          git clone --depth=1 --single-branch -b openwrt-25.12  https://github.com/immortalwrt/immortalwrt.git openwrt
-          
+          git clone --depth=1 --single-branch -b openwrt-25.12  https://github.com/openwrt/openwrt.git openwrt
       - name: Run Custom Script
         working-directory: openwrt
         run: |
