@@ -38,7 +38,9 @@ git clone --depth=1 --single-branch https://github.com/openwrt/luci.git
 rm -rf ../feeds/packages/net/frp/* &&mv packages/net/frp/* ../feeds/packages/net/frp/
 rm -rf ../feeds/luci/applications/luci-app-frpc/*&&mv luci/applications/luci-app-frpc/* ../feeds/luci/applications/luci-app-frpc/
 rm -rf ../feeds/luci/applications/luci-app-frps/*&&mv luci/applications/luci-app-frps/* ../feeds/luci/applications/luci-app-frps/
-cd ../&&rm -rf gggg
+# golang
+rm -rf ../feeds/packages/lang/golang/ &&mv packages/lang/golang/ ../feeds/packages/lang/
+cd ../&&rm -rf dddd
 
 #ddnsgo
 mkdir -p 'dddd'&&cd dddd
@@ -54,11 +56,6 @@ sed -i \
     -e 's/^\([[:space:]]*chown \)ddns-go/\1nobody/' \
     -e 's/^\([[:space:]]*procd_set_param user \)ddns-go/\1nobody/' \
     feeds/packages/net/ddns-go/files/ddns-go.init
-
-
-# golang
-#rm -rf ../feeds/packages/lang/golang/ &&mv packages/lang/golang/ ../feeds/packages/lang/
-#cd ../&&rm -rf dddd
 
 #qemu lan-wan
 sed -i \
