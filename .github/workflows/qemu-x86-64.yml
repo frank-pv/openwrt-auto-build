@@ -52,7 +52,6 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt upgrade -y
           sudo apt install -y \
           bzip2 g++ gawk gcc git glibc-source libncurses-dev \
           make swig jq vim unzip
