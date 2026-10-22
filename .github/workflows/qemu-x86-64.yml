@@ -6,8 +6,12 @@ on:
       model:
         description: "Build Model"
         required: true
+        type: choice
+        options:
+          - qemu-x86-64
+          - qemu-x86-64-ts
         default: "qemu-x86-64"
-        # 对应model下的型号
+        # 对应 model/ 下的型号目录
 
 permissions:
   contents: write

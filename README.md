@@ -5,8 +5,8 @@
 ## 快速使用
 
 1. 打开仓库的 **Actions** 页面。
-2. 在左侧选择 **Build OpenWrt for rax-3000me**。
-3. 点击 **Run workflow**，`model` 保持为 `rax-3000me`，然后确认运行。
+2. 选择对应工作流：QEMU 设备使用 **Build OpenWrt for qemu-x86-64**，rax-3000me 使用 **Build OpenWrt for rax-3000me**。
+3. 点击 **Run workflow**。QEMU 工作流可在 `model` 下拉列表中选择 `qemu-x86-64` 或 `qemu-x86-64-ts`，默认是 `qemu-x86-64`；rax 工作流使用 `rax-3000me`。
 4. 等待构建完成。构建成功后，打开仓库的 **Releases** 页面下载固件。
 
 工作流会自动完成以下操作：
@@ -21,8 +21,12 @@
 
 ```text
 .
-├── .github/workflows/rax-3000me.yml  # rax-3000me 构建工作流
+├── .github/workflows/
+│   ├── qemu-x86-64.yml              # QEMU 型号选择构建工作流
+│   └── rax-3000me.yml               # rax-3000me 构建工作流
 └── model/
+    ├── qemu-x86-64/                  # QEMU 型号配置
+    ├── qemu-x86-64-ts/               # QEMU TS 型号配置
     └── rax-3000me/
         ├── .config                    # ImmortalWrt 编译配置
         ├── custom.sh                  # feeds 和第三方软件包定制脚本
@@ -42,8 +46,8 @@
 
 1. 在 `model/` 下创建新的型号目录，例如 `model/example-device/`。
 2. 在目录中放入 `.config`、`custom.sh` 和 `Makefile`。其中 `custom.sh` 和 `Makefile` 可以按需调整。
-3. 复制并修改 `.github/workflows/rax-3000me.yml`，使工作流的名称和默认 `model` 与新目录一致。
-4. 提交并推送后，在对应工作流中手动运行，并确认 `model` 输入值与目录名完全一致。
+3. 如果型号使用现有工作流对应的源码，在 `.github/workflows/qemu-x86-64.yml` 的 `model.options` 中增加目录名，并按需调整 `default`；不同源码的设备应使用独立工作流。
+4. 提交并推送后，在对应工作流中手动运行，并确认所选 `model` 与目录名完全一致。
 
 `.config` 应由 ImmortalWrt 的配置流程生成或维护，修改后建议先运行一次 `make defconfig`，确认配置没有被自动删改。
 
