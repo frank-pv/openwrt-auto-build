@@ -12,6 +12,8 @@ git clone --depth=1 --single-branch https://github.com/jerrykuku/luci-theme-argo
 git clone --depth=1 --single-branch https://github.com/Openwrt-Passwall/openwrt-passwall2.git
 
 mv openwrt-passwall2/luci-app-passwall2/ ./&&rm -rf openwrt-passwall2
+# Remove smartdns package to avoid conflicts
+rm -rf openwrt-passwall-packages/smartdns
 
 #chinadns
 #sha256:c5836c19594ff1d1e2a13ffcfea51976f3e2eea4269ea8b8dd5d69ba94543133

@@ -10,6 +10,8 @@ git clone --depth=1 --single-branch https://github.com/jerrykuku/luci-theme-argo
 git clone --depth=1 --single-branch https://github.com/Openwrt-Passwall/openwrt-passwall2.git
 
 mv openwrt-passwall2/luci-app-passwall2/ ./&&rm -rf openwrt-passwall2
+# Remove smartdns package to avoid conflicts
+rm -rf openwrt-passwall-packages/smartdns
 
 #update feed
 cd ../../
