@@ -31,7 +31,6 @@ rm -rf feeds/luci/applications/luci-app-smartdns
 git clone  --depth=1 --single-branch https://github.com/pymumu/luci-app-smartdns.git feeds/luci/applications/luci-app-smartdns/
 rm -rf  feeds/packages/net/smartdns
 git clone  --depth=1 --single-branch https://github.com/pymumu/openwrt-smartdns.git feeds/packages/net/smartdns/
-sed -i -E 's/^([[:space:]]*)(PKG_MIRROR_HASH|MIRROR_HASH):=.*/\1\2:=skip/' ./feeds/packages/net/smartdns/Makefile
 
 #frp
 mkdir -p 'gggg'&&cd gggg 
